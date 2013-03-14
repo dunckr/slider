@@ -21,8 +21,6 @@ $(function() {
 	list.push('');
 	var correct = list.join();
 	list.shuffle();
-	// hax
-	list = [1,2,3,4,5,6,7,8,''];
 
 	var grid = [];
 	var temp = [];
@@ -48,6 +46,9 @@ $(function() {
 					numClicks++;
 				};
 			}(n,m);
+			if (grid[n][m] === '') {
+				items[count].className = items[count].className + ' empty';
+			}
 			count++;
 		}
 	}
@@ -96,8 +97,13 @@ $(function() {
 		var value = grid[n][m];
 		grid[p][q] = value;
 		grid[n][m] = '';
-		$('#' + n + m).html('');
-		$('#' + p + q).html(value);
+		var first = $('#' + n + m);
+		first.html('');
+		first.addClass('empty');
+
+		var second = $('#' + p + q);
+		second.html(value);
+		second.removeClass('empty');
 	}
 
 	// Check if won or not
