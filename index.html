@@ -1,67 +1,56 @@
 <!doctype html>
 <html>
-    <head>
-        <meta charset=utf-8>
-        <meta name=description content="">
-        <meta name=viewport content="width=device-width, initial-scale=1">
-		<title>Sliding</title>
-		    <link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
+<head>
+    <meta charset=utf-8>
+    <meta name=description content="">
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <title>Slider game</title>
+    <style>
+    body {
+        background-color: #FFF6E5;
+        margin: 20px 0 0 20px;
+      }
+    .column {
+      padding-right: 15px;
+    }
+    .item {
+      display: inline-block;
+      width: 100%;
+      font-family: 'Oswald', serif;
+      font-size: 60px;
+      color: #2185C5;
+      background-color: #FF7F66;
+      height: 100px;
+      width: 100px;
+      text-align: center;
+      border-radius: 15px;
+      float: left;
+      vertical-align: middle;
+      line-height: 100px;
+    }
+    .empty {
+        background-color: transparent;
+    }  
+    </style>
+</head>
+<body>
+  <p></p>
+  <select>
+    <option selected="selected" disabled="disabled">Game difficulty</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+    <option value="9">9</option>
+    <option value="10">10</option>
+  </select>
+  <table id="grid"></table>
 
-		<style>	
-			/* Fix horrible looks */
-			body {
-				background-color: #FFF6E5;
-			}
-			/*FFF6E5*/
-/*			3E454C
-			3E454C
-			7ECEFD
-			FFF6E5
-			FF7F66
-*/			.grid {
-				margin-left: 100px;
-				mar
-			}
-			.item {
-				font-family: 'Oswald', serif;
-				font-size: 60px;
-				color: #2185C5;
-				background-color: #FF7F66;
-				height: 100px;
-				width: 100px;
-				text-align: center;
-				border-radius: 15px;
-			}
-			.empty {
-				background-color: transparent;
-			}
-			.onclick {
-
-			}
-		</style>
-    </head>
-    <body>
-		
-		<!-- grid -->
-		<table>
-			<tr class="grid">
-				<td class="item"></td>
-				<td class="item"></td>
-				<td class="item"></td>
-			</tr>
-			<tr class="grid">
-				<td class="item"></td>
-				<td class="item"></td>
-				<td class="item"></td>
-			</tr>
-			<tr class="grid">
-				<td class="item"></td>
-				<td class="item"></td>
-				<td class="item"></td>
-			</tr>
-		</table>
-
-		<script src="jquery.js"></script>     
-        <script src="main.js"></script>
-    </body>
+  <script src="jquery.js"></script>
+  <script src="main.js"></script>
+</body>
 </html>

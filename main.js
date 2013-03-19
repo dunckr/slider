@@ -1,114 +1,161 @@
-// Grid Shuffle
-Array.prototype.shuffle = function () {
-    for (var i = this.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var tmp = this[i];
-        this[i] = this[j];
-        this[j] = tmp;
+var slider = (function(slider){
+
+  var Grid = function(size) {
+    var grid = [];
+    var numItems = size*size;
+    var sequence = [];
+    for (var j=1; j<numItems; j++) {
+      sequence.push(j);
     }
-    return this;
-};
+    sequence.push('');
+    var correct = sequence.join();
 
-$(function() {
-	// TODO: dynamically create the dom grid
-	// Create the multi array for storing the grid of elements
-	var size = 9;
-	var rows = Math.sqrt(size);
-	var list = [];
-	for (var j=1; j<size; j++) {
-		list.push(j);
-	}
-	list.push('');
-	var correct = list.join();
-	list.shuffle();
+    Object.defineProperties(this,{
+      grid: {
+        value: grid
+      },
+      sequence: {
+        value: sequence
+      },
+      correct: {
+        value: correct
+      },
+      length: {
+        value: numItems
+      }
+    });
+    Object.defineProperties(Grid.prototype,{
+      pos: {
+        value: function(n,m) {
+          return this.grid[n][m];
+        }
+      },
+      isSolved: {
+        value: function() {
+          return this.correct === this.grid.join();
+        }
+      },
+      shuffle: {
+        value: function() {
+          for (var i=this.length-1; i>0; i--) {
+            var r = Math.floor(Math.random() * (i+1));
+            var tmp = this.sequence[i];
+            this.sequence[i] = this.sequence[r];
+            this.sequence[r] = tmp;
+          }
+          return this.sequence;
+        }
+      },
+      structure: {
+        value: function() {
+            this.grid = [];
+            var temp = [];
+            for (var i=0; i <= this.length; i++) {
+              if (i%size === 0 && i !== 0) {
+                this.grid.push(temp);
+                temp = [ this.sequence[i] ];
+              } else {
+                temp.push( this.sequence[i] );
+              }
+            }
+            return this.grid;
+        }
+      },
+      itemClicked: {
+        value: function(n,m) {
+          this.canMove(n,m);
+        }
+      },
+      canMove: {
+        value: function(n,m) {
+          var max = size - 1;
+          var value = this.pos(n,m);
+          if (value !== '') {
+            if (n>0 && this.pos(n-1,m) === '') {
+              this.swap(n,m,n-1,m);
+            }
+            else if (n<max && this.pos(n+1,m) === '') {
+              this.swap(n,m,n+1,m);
+            }
+            else if (m>0 && this.pos(n,m-1) === '') {
+              this.swap(n,m,n,m-1);
+            }
+            else if (m<max && this.pos(n,m+1) === '') {
+              this.swap(n,m,n,m+1);
+            }
+          }
+        }
+      },
+      swap: {
+        value: function(n,m,p,q) {
+          var value = grid[n][m];
+          grid[p][q] = value;
+          grid[n][m] = '';
 
-	var grid = [];
-	var temp = [];
-	for (var i=0; i <= size; i++) {
-		if (i%rows === 0 && i !== 0) {
-			grid.push(temp);
-			temp = [ list[i] ];
-		} else {
-			temp.push( list[i] );
-		}
-	}
+          // TODO - moving dom elements logic shouldnt be here
+          var first = $('#' + n + m);
+          first.html('');
+          first.addClass('empty');
 
-	var items = $('.item');
-	var count = 0;
-	var numClicks = 0;
-	for (var n=0; n<rows; n++) {
-		for (var m=0; m<rows; m++) {
-			items[count].innerHTML = grid[n][m];
-			items[count].id = n + '' + m;
-			items[count].onclick = function(n,m) {
-				return function() {
-					itemClicked(n,m);
-					numClicks++;
-				};
-			}(n,m);
-			if (grid[n][m] === '') {
-				items[count].className = items[count].className + ' empty';
-			}
-			count++;
-		}
-	}
+          var second = $('#' + p + q);
+          second.html(value);
+          second.removeClass('empty');
+        }
+      }
+    });
+  };
 
-	//$('#1').html('updated');
+  var Game = function(size) {
+    var grid = new Grid(size);
+    grid.shuffle();
+    grid.structure();
 
-	function itemClicked(n,m) {
-		canMove(n,m);
-		// check for win
-		console.log(grid.join());
-		console.log(correct);
-		if (grid.join() === correct) {
-			$('body').append('YOU WINNNER!' + 
-				' with ' + numClicks + ' clicks taken');
-			// reset
-			numClicks = 0;
-		}
-		// if win then add info
-	}
+    Object.defineProperties(this,{
+      grid: {
+        value: grid
+      },
+      elements: {
+        value: $('#grid')
+      }
+    });
+    Object.defineProperties(Game.prototype,{
+      draw: {
+        value: function() {
+          var item = 0;
+          for (var n=0; n<size; n++) {
+            var column = document.createElement("tr");
+            column.className = 'columns';
+            this.elements.append(column);
 
-	function canMove(n,m) {
-		var max = rows - 1;
-		var value = grid[n][m];
+            for (var m=0; m<size; m++) {
+              var value = this.grid.pos(n,m);
+              item = document.createElement("td");
+              item.id = n + '' + m;
+              item.className = 'item';
+              if (value === '') {
+                item.className = item.className + ' empty';
+              }
+              item.innerHTML = value;
+              item.addEventListener('click',function(g,n,m) {
+                return function() {
+                    g.itemClicked(n,m);
+                };
+              }(this.grid,n,m),false);
 
-		if (value !== '') {
+              column.appendChild(item);
+            }
+          }
+        }
+      }
+    });
+  };
 
-			console.log(n + ' ' + m);
+  slider.createGame = function(size) {
+    var game = new Game(size);
+    game.draw();
+    return game;
+  };
+  return slider;
+})(slider || {});
 
-			if (n>0 && grid[n-1][m] === '') {
-				swap(n,m,n-1,m);
-			}
-			else if (n<max && grid[n+1][m] === '') {
-				swap(n,m,n+1,m);
-			}
-			else if (m>0 && grid[n][m-1] === '') {
-				swap(n,m,n,m-1);
-			}
-			else if (m<max && grid[n][m+1] === '') {
-				swap(n,m,n,m+1);
-			}
-		}
-	}
-
-	// TODO: Use callbacks on change
-	function swap(n,m,p,q) {
-		var value = grid[n][m];
-		grid[p][q] = value;
-		grid[n][m] = '';
-		var first = $('#' + n + m);
-		first.html('');
-		first.addClass('empty');
-
-		var second = $('#' + p + q);
-		second.html(value);
-		second.removeClass('empty');
-	}
-
-	// Check if won or not
-	// 
-	// Can reset
-
-
-});
+slider.createGame(4);
