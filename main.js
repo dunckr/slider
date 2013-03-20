@@ -1,39 +1,42 @@
 var slider = (function(slider){
-  var Grid = function(size) {
-    var grid = [];
-    var numItems = size*size;
-    var sequence = [];
-    for (var j=1; j<numItems; j++) {
-      sequence.push(j);
-    }
-    sequence.push('');
-    var correct = sequence.join();
-
+  var Grid = function() {
     Object.defineProperties(this,{
       grid: {
-        value: grid,
+        value: [],
         writable: true
       },
       sequence: {
-        value: sequence,
+        value: [],
         writable: true
       },
       correct: {
-        value: correct,
+        value: [],
         writable: true
       },
       length: {
-        value: numItems,
+        value: 0,
         writable: true
       },
       columns: {
-        value: size,
+        value: 0,
         writable: true
       }
     });
   };
 
   Object.defineProperties(Grid.prototype,{
+    create: {
+      value: function(size) {
+        this.columns = size;
+        this.length = size*size;
+        for (var j=1; j<this.length; j++) {
+          this.sequence.push(j);
+        }
+        this.sequence.push('');
+        this.correct = this.sequence.join();
+        return this;
+      }
+    },
     pos: {
       value: function(n,m) {
         if (arguments.length === 3) {
@@ -106,11 +109,7 @@ var slider = (function(slider){
         this.pos(p,q,value);
         this.pos(n,m,'');
 
-        // var value = this.grid[n][m];
-        // this.grid[p][q] = value;
-        // this.grid[n][m] = '';
-
-        //TOFIX: moving dom element logic shouldn't be here
+        //TOFIX: moving dom element logic shouldn't live here
         //TODO: add moving animation
         $('#' + n + m).addClass('empty')
                   .html('');
@@ -118,34 +117,17 @@ var slider = (function(slider){
                   .html(value);
         return this;
       }
-    },
-    reset: {
-      value: function(size) {
-        this.grid = [];
-        this.length = size*size;
-        this.sequence = [];
-        for (var j=1; j<this.length; j++) {
-          this.sequence.push(j);
-        }
-        this.sequence.push('');
-        this.correct = this.sequence.join();
-        return this;
-      }
     }
   });
 
-  var Game = function(size) {
-    var grid = new Grid(size);
-    grid.shuffle();
-    grid.structure();
-
+  var Game = function() {
     Object.defineProperties(this,{
       grid: {
-        value: grid,
+        value: [],
         writable: true
       },
       columns: {
-        value: size,
+        value: 0,
         writable: true
       },
       elements: {
@@ -155,6 +137,16 @@ var slider = (function(slider){
     });
   };
   Object.defineProperties(Game.prototype,{
+    create: {
+      value: function(size) {
+        this.grid = new Grid();
+        this.columns = size;
+        this.grid.create(size);
+        this.grid.shuffle();
+        this.grid.structure();
+        return this;
+      }
+    },
     draw: {
       value: function() {
 
@@ -188,10 +180,7 @@ var slider = (function(slider){
     reset: {
       value: function(size) {
         $('#grid').empty();
-        this.grid.reset(size);
-        // this.grid = new Grid(size);
-        this.grid.shuffle();
-        this.grid.structure();
+        this.create(size);
         this.draw();
       }
     }
@@ -199,20 +188,15 @@ var slider = (function(slider){
 
 
   slider.createGame = function(size) {
-    var game = new Game(size);
+    var game = new Game();
+    game.create(size);
     game.draw();
     return game;
   };
   return slider;
 })(slider || {});
 
-// TODO: need to workout best way to reset the game 
-// without redefining all properties
-// set grid to shuffle
-// then draw
-
 var game = slider.createGame(5);
 $('.drop').change(function() {
-  // slider.createGame($(this).val());
   game.reset($(this).val());
 });
