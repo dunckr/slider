@@ -162,6 +162,8 @@ var slider = (function(slider){
                 id: '' + n + m,
                 class: 'item',
                 html: value,
+                
+                //TOFIX: Must be a better way to fire this event
                 click: function(g,n,m) {
                   return function() {
                     g.itemClicked(n,m);
