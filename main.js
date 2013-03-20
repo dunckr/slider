@@ -1,5 +1,4 @@
 var slider = (function(slider){
-
   var Grid = function(size) {
     var grid = [];
     var numItems = size*size;
@@ -94,7 +93,8 @@ var slider = (function(slider){
           grid[p][q] = value;
           grid[n][m] = '';
 
-          // TOFIX: moving dom elements logic shouldn't be here
+          //TOFIX: moving dom element logic shouldn't be here
+          //TODO: add moving animation
           var first = $('#' + n + m);
           first.html('');
           first.addClass('empty');
@@ -102,7 +102,6 @@ var slider = (function(slider){
           var second = $('#' + p + q);
           second.html(value);
           second.removeClass('empty');
-
           return this;
         }
       }
@@ -125,34 +124,42 @@ var slider = (function(slider){
     Object.defineProperties(Game.prototype,{
       draw: {
         value: function() {
-          var item = 0;
-          for (var n=0; n<size; n++) {
-            var column = document.createElement("tr");
-            $(column).addClass('columns');
-            this.elements.append(column);
-            console.log($(column));
 
+          for (var n=0; n<size; n++) {
+            var column = $('<tr/>', {
+                class: 'columns'
+            }).appendTo(this.elements);
+
+            //TODO: jQuery chaining
             for (var m=0; m<size; m++) {
               var value = this.grid.pos(n,m);
-              item = document.createElement("td");
-              // update so using jquery
-              // item = $(item);
-              item.id = '' + n + m;
-              // item.addClass('item');
-              item.className = 'item';
-              if (value === '') {
-                item.className = item.className + ' empty';
-              }
-              item.innerHTML = value;
-              item.addEventListener('click',function(g,n,m) {
-                return function() {
-                    g.itemClicked(n,m);
-                };
-              }(this.grid,n,m),false);
 
-              column.appendChild(item);
+              var item = $('<td/>', {
+                  id: '' + n + m,
+                  class: 'item',
+                  html: value,
+                  click: function(g,n,m) {
+                    return function() {
+                      g.itemClicked(n,m);
+                    };
+                  }(this.grid,n,m)
+              }).appendTo(column);
+
+              if (value === '') {
+                item.addClass('empty');
+              }
             }
           }
+          return this;
+        }
+      },
+      reset: {
+        value: function(size) {
+          this.grid = new Grid(size);
+          grid.shuffle();
+          grid.structure();
+          this.draw();
+          return this;
         }
       }
     });
@@ -163,9 +170,6 @@ var slider = (function(slider){
     game.draw();
     return game;
   };
-  slider.resetGame = function(size) {
-    
-  }
   return slider;
 })(slider || {});
 
@@ -173,8 +177,9 @@ var slider = (function(slider){
 // without redefining all properties
 // set grid to shuffle
 // then draw
+
+var game = slider.createGame(5);
 $('.drop').change(function() {
   // slider.createGame($(this).val());
-  slider.resetGame($(this).val());
+  game.resetGame($(this).val());
 });
-var s = slider.createGame(5);
