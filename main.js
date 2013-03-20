@@ -82,6 +82,8 @@ var slider = (function(slider){
             }
             else if (m<max && this.pos(n,m+1) === '') {
               this.swap(n,m,n,m+1);
+            } else {
+              return false;
             }
           }
         }
@@ -92,7 +94,7 @@ var slider = (function(slider){
           grid[p][q] = value;
           grid[n][m] = '';
 
-          // TODO - moving dom elements logic shouldn't be here
+          // TOFIX: moving dom elements logic shouldn't be here
           var first = $('#' + n + m);
           first.html('');
           first.addClass('empty');
@@ -100,6 +102,8 @@ var slider = (function(slider){
           var second = $('#' + p + q);
           second.html(value);
           second.removeClass('empty');
+
+          return this;
         }
       }
     });
@@ -124,13 +128,17 @@ var slider = (function(slider){
           var item = 0;
           for (var n=0; n<size; n++) {
             var column = document.createElement("tr");
-            column.className = 'columns';
+            $(column).addClass('columns');
             this.elements.append(column);
+            console.log($(column));
 
             for (var m=0; m<size; m++) {
               var value = this.grid.pos(n,m);
               item = document.createElement("td");
-              item.id = n + '' + m;
+              // update so using jquery
+              // item = $(item);
+              item.id = '' + n + m;
+              // item.addClass('item');
               item.className = 'item';
               if (value === '') {
                 item.className = item.className + ' empty';
@@ -155,10 +163,18 @@ var slider = (function(slider){
     game.draw();
     return game;
   };
+  slider.resetGame = function(size) {
+    
+  }
   return slider;
 })(slider || {});
 
+// TODO: need to workout best way to reset the game 
+// without redefining all properties
+// set grid to shuffle
+// then draw
 $('.drop').change(function() {
-  slider.createGame($(this).val());
+  // slider.createGame($(this).val());
+  slider.resetGame($(this).val());
 });
 var s = slider.createGame(5);
