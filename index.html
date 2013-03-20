@@ -7,8 +7,8 @@
     <title>Slider game</title>
     <style>
     body {
-        background-color: #FFF6E5;
-        margin: 20px 0 0 20px;
+      background-color: #FFF6E5;
+      margin: 20px 0 0 20px;
       }
     .column {
       padding-right: 15px;
@@ -28,16 +28,25 @@
       vertical-align: middle;
       line-height: 100px;
     }
+/*    .item:hover {
+      background-color: #3E454C;
+    }*/
     .empty {
-        background-color: transparent;
-    }  
+      background-color: transparent;
+    }
+    .drop {
+      background-color: #3E454C;
+      color: #FFF6E5;
+      font-family: 'Oswald', serif;
+      font-size: 16px;
+      border-radius: 5px;
+    }
     </style>
 </head>
 <body>
   <p></p>
-  <select>
-    <option selected="selected" disabled="disabled">Game difficulty</option>
-    <option value="1">1</option>
+  <select class="drop">
+    <option selected="selected" disabled="disabled">Difficulty:</option>
     <option value="2">2</option>
     <option value="3">3</option>
     <option value="4">4</option>

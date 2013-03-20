@@ -92,7 +92,7 @@ var slider = (function(slider){
           grid[p][q] = value;
           grid[n][m] = '';
 
-          // TODO - moving dom elements logic shouldnt be here
+          // TODO - moving dom elements logic shouldn't be here
           var first = $('#' + n + m);
           first.html('');
           first.addClass('empty');
@@ -158,4 +158,7 @@ var slider = (function(slider){
   return slider;
 })(slider || {});
 
-slider.createGame(4);
+$('.drop').change(function() {
+  slider.createGame($(this).val());
+});
+var s = slider.createGame(5);
