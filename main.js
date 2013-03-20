@@ -11,32 +11,35 @@ var slider = (function(slider){
 
     Object.defineProperties(this,{
       grid: {
-        value: grid
+        value: grid,
+        writable: true
       },
       sequence: {
-        value: sequence
+        value: sequence,
+        writable: true
       },
       correct: {
-        value: correct
+        value: correct,
+        writable: true
       },
       length: {
-        value: numItems
+        value: numItems,
+        writable: true
       },
       columns: {
-        value: size
+        value: size,
+        writable: true
       }
     });
   };
 
   Object.defineProperties(Grid.prototype,{
     pos: {
-      value: function() {
-        // console.log(arguments[0] + ' ' + arguments[1]
-          // + ' ' + arguments[2]);
+      value: function(n,m) {
         if (arguments.length === 3) {
-          this.grid[arguments[0]][arguments[1]] = arguments[2];
+          this.grid[n][m] = arguments[2];
         }
-        return this.grid[arguments[0]][arguments[1]];
+        return this.grid[n][m];
       }
     },
     isSolved: {
@@ -99,12 +102,13 @@ var slider = (function(slider){
     },
     swap: {
       value: function(n,m,p,q) {
-        // var value = this.pos(n,m);
-        // this.pos(n,m,value);
-        // this.pos(n,m,'');
-        var value = this.grid[n][m];
-        this.grid[p][q] = value;
-        this.grid[n][m] = '';
+        var value = this.pos(n,m);
+        this.pos(p,q,value);
+        this.pos(n,m,'');
+
+        // var value = this.grid[n][m];
+        // this.grid[p][q] = value;
+        // this.grid[n][m] = '';
 
         //TOFIX: moving dom element logic shouldn't be here
         //TODO: add moving animation
@@ -117,8 +121,15 @@ var slider = (function(slider){
     },
     reset: {
       value: function(size) {
-        this.grid = new Grid(size);
-        return 0;
+        this.grid = [];
+        this.length = size*size;
+        this.sequence = [];
+        for (var j=1; j<this.length; j++) {
+          this.sequence.push(j);
+        }
+        this.sequence.push('');
+        this.correct = this.sequence.join();
+        return this;
       }
     }
   });
@@ -130,13 +141,16 @@ var slider = (function(slider){
 
     Object.defineProperties(this,{
       grid: {
-        value: grid
+        value: grid,
+        writable: true
       },
       columns: {
-        value: size
+        value: size,
+        writable: true
       },
       elements: {
-        value: $('#grid')
+        value: $('#grid'),
+        writable: true
       }
     });
   };
@@ -173,7 +187,12 @@ var slider = (function(slider){
     },
     reset: {
       value: function(size) {
+        $('#grid').empty();
         this.grid.reset(size);
+        // this.grid = new Grid(size);
+        this.grid.shuffle();
+        this.grid.structure();
+        this.draw();
       }
     }
   });
