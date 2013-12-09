@@ -1,5 +1,7 @@
-#[Slider](http://dunckr.com)
+# Slider
 
 Simple HTML puzzle game.
 
-#[Here for a demo.](http://dunckr.com/slider)
+## License
+
+MIT © [Duncan Beaton](http://dunckr.com)
